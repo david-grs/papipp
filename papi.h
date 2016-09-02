@@ -32,7 +32,7 @@ template <event... _EventsT>
 struct event_set : public event_set_base
 {
     static constexpr std::size_t events_count = sizeof...(_EventsT);
-    typedef std::array<long long, events_count> counters_type;
+    using counters_type = std::array<long long, events_count>;
 
     static const std::array<event, events_count>& get_event_types()
     {
