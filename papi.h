@@ -23,13 +23,15 @@ struct event_set_base
     virtual void stop() = 0;
 };
 
-template <int... _EventsT>
+using event = int;
+
+template <event... _EventsT>
 struct event_set : public event_set_base
 {
-    static constexpr int events_count = sizeof...(_EventsT);
+    static constexpr std::size_t events_count = sizeof...(_EventsT);
     typedef std::array<long long, events_count> counters_type;
 
-    static const std::array<int, events_count>& get_event_types()
+    static const std::array<event, events_count>& get_event_types()
     {
         return s_events;
     }
@@ -66,36 +68,36 @@ struct event_set : public event_set_base
         return m_counters;
     }
 
-    template <int _EventIndexT>
+    template <event _EventIndexT>
     long long get_counter() const
     {
         return m_counters[_EventIndexT];
     }
 
-    template <int _EventIndexT>
+    template <event _EventIndexT>
     static constexpr int get_event_type()
     {
         return s_events[_EventIndexT];
     }
 
-    template <int _EventIndexT>
+    template <event _EventIndexT>
     static const std::string& get_event_name()
     {
         return s_event_names[_EventIndexT];
     }
 
    private:
-    static constexpr std::array<int, events_count> s_events = {{_EventsT...}};
+    static constexpr std::array<event, events_count> s_events = {{_EventsT...}};
     static const std::array<std::string, events_count> s_event_names;
 
     counters_type m_counters;
 };
 
-template <int... _EventsT>
-constexpr std::array<int, event_set<_EventsT...>::events_count> event_set<_EventsT...>::s_events;
+template <event... _EventsT>
+constexpr std::array<event, event_set<_EventsT...>::events_count> event_set<_EventsT...>::s_events;
 
 template <std::size_t _SizeT>
-static auto get_papi_event_names(const std::array<int, _SizeT>& events)
+static auto get_papi_event_names(const std::array<event, _SizeT>& events)
 {
     std::array<std::string, _SizeT> ret;
     for (std::size_t i = 0; i < ret.size(); ++i)
@@ -104,11 +106,11 @@ static auto get_papi_event_names(const std::array<int, _SizeT>& events)
     return ret;
 }
 
-template <int... _EventsT>
+template <event... _EventsT>
 const std::array<std::string, event_set<_EventsT...>::events_count> event_set<_EventsT...>::s_event_names =
     get_papi_event_names(event_set<_EventsT...>::s_events);
 
-typedef event_set<PAPI_L1_DCM, PAPI_L2_DCM, PAPI_L3_TCM> cache_profiler;
-typedef event_set<PAPI_TOT_INS, PAPI_TOT_CYC, PAPI_BR_MSP> instr_profiler;
+using cache_events = event_set<PAPI_L1_DCM, PAPI_L2_DCM, PAPI_L3_TCM>;
+using instr_events = event_set<PAPI_TOT_INS, PAPI_TOT_CYC, PAPI_BR_MSP>;
 
 }
