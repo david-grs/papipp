@@ -6,6 +6,9 @@
 #include <array>
 #include <string>
 
+#define likely_true(x)   __builtin_expect(!!(x), 1)
+#define likely_false(x)  __builtin_expect(!!(x), 0)
+
 namespace papi
 {
 
@@ -39,28 +42,17 @@ struct event_set : public event_set_base
     void start() override
     {
         int ret;
-        if ((ret = ::PAPI_start_counters(const_cast<int*>(s_events.data()), events_count)) != PAPI_OK)
-        {
-            std::string error("PAPI_start_counters failed with events: ");
 
-            for (const std::string& name : s_event_names)
-            {
-                error += name;
-                error += " ";
-            }
-
-            error += ": ";
-            error += PAPI_strerror(ret);
-            throw std::runtime_error(error);
-        }
+        if (likely_false((ret = ::PAPI_start_counters(const_cast<int*>(s_events.data()), events_count)) != PAPI_OK))
+            throw std::runtime_error(std::string("PAPI_start_counters failed with error: ") + PAPI_strerror(ret));
     }
 
     void stop() override
     {
         int ret;
 
-        if ((ret = PAPI_stop_counters(&m_counters[0], events_count)) != PAPI_OK)
-            throw std::runtime_error(PAPI_strerror(ret));
+        if (likely_false((ret = PAPI_stop_counters(&m_counters[0], events_count)) != PAPI_OK))
+            throw std::runtime_error(std::string("PAPI_stop_counters failed with error: ") + PAPI_strerror(ret));
     }
 
     const counters_type& get_counters() const
