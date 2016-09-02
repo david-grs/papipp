@@ -11,20 +11,20 @@ namespace papi
 
 inline std::string get_papi_event_name(int event_code)
 {
-    char event_name[PAPI_MAX_STR_LEN];
-    PAPI_event_code_to_name(event_code, event_name);
+    std::array<char, PAPI_MAX_STR_LEN> event_name;
+    PAPI_event_code_to_name(event_code, event_name.data());
 
-    return event_name;
+    return event_name.data();
 }
 
-struct papi_wrapper_base
+struct event_set_base
 {
     virtual void start() = 0;
     virtual void stop() = 0;
 };
 
 template <int... _EventsT>
-struct papi_wrapper : public papi_wrapper_base
+struct event_set : public event_set_base
 {
     static constexpr int events_count = sizeof...(_EventsT);
     typedef std::array<long long, events_count> counters_type;
@@ -92,7 +92,7 @@ struct papi_wrapper : public papi_wrapper_base
 };
 
 template <int... _EventsT>
-constexpr std::array<int, papi_wrapper<_EventsT...>::events_count> papi_wrapper<_EventsT...>::s_events;
+constexpr std::array<int, event_set<_EventsT...>::events_count> event_set<_EventsT...>::s_events;
 
 template <std::size_t _SizeT>
 static auto get_papi_event_names(const std::array<int, _SizeT>& events)
@@ -105,10 +105,10 @@ static auto get_papi_event_names(const std::array<int, _SizeT>& events)
 }
 
 template <int... _EventsT>
-const std::array<std::string, papi_wrapper<_EventsT...>::events_count> papi_wrapper<_EventsT...>::s_event_names =
-    get_papi_event_names(papi_wrapper<_EventsT...>::s_events);
+const std::array<std::string, event_set<_EventsT...>::events_count> event_set<_EventsT...>::s_event_names =
+    get_papi_event_names(event_set<_EventsT...>::s_events);
 
-typedef papi_wrapper<PAPI_L1_DCM, PAPI_L2_DCM, PAPI_L3_TCM> cache_profiler;
-typedef papi_wrapper<PAPI_TOT_INS, PAPI_TOT_CYC, PAPI_BR_MSP> instr_profiler;
+typedef event_set<PAPI_L1_DCM, PAPI_L2_DCM, PAPI_L3_TCM> cache_profiler;
+typedef event_set<PAPI_TOT_INS, PAPI_TOT_CYC, PAPI_BR_MSP> instr_profiler;
 
 }
