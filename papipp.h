@@ -1,6 +1,9 @@
 #pragma once
 
+extern "C"
+{
 #include <papi.h>
+}
 
 #include <cstddef>
 #include <array>
@@ -20,16 +23,10 @@ inline std::string get_papi_event_name(int event_code)
     return event_name.data();
 }
 
-struct event_set_base
-{
-    virtual void start() = 0;
-    virtual void stop() = 0;
-};
-
 using event = int;
 
 template <event... _EventsT>
-struct event_set : public event_set_base
+struct event_set
 {
     static constexpr std::size_t events_count = sizeof...(_EventsT);
     static_assert(events_count > 0, "at least one event has to be in the set");
@@ -41,7 +38,7 @@ struct event_set : public event_set_base
         return s_events;
     }
 
-    void start() override
+    void start()
     {
         int ret;
 
@@ -49,7 +46,7 @@ struct event_set : public event_set_base
             throw std::runtime_error(std::string("PAPI_start_counters failed with error: ") + PAPI_strerror(ret));
     }
 
-    void stop() override
+    void stop()
     {
         int ret;
 
@@ -81,14 +78,14 @@ struct event_set : public event_set_base
     }
 
    private:
-    static constexpr std::array<event, events_count> s_events = {{_EventsT...}};
+    static constexpr const std::array<event, events_count> s_events = {{_EventsT...}};
     static const std::array<std::string, events_count> s_event_names;
 
     counters_type m_counters;
 };
 
 template <event... _EventsT>
-constexpr std::array<event, event_set<_EventsT...>::events_count> event_set<_EventsT...>::s_events;
+constexpr const std::array<event, event_set<_EventsT...>::events_count> event_set<_EventsT...>::s_events;
 
 template <std::size_t _SizeT>
 static auto get_papi_event_names(const std::array<event, _SizeT>& events)
