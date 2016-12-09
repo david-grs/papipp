@@ -24,11 +24,12 @@ inline std::string get_papi_event_name(int event_code)
 }
 
 using papi_event = int;
+using papi_counter = long long;
 
 template <papi_event _Event>
 struct counter
 {
-    using value_type = long long;
+    using value_type = papi_counter;
 
     value_type value() const { return value; }
 
@@ -48,6 +49,8 @@ const std::string counter<_Event>::s_name = get_papi_event_name(_Event);
 template <papi_event... _Events>
 struct counter_set
 {
+    using value_type = papi_counter;
+
     static constexpr const std::size_t events_count = sizeof...(_Events);
     static_assert(events_count > 0, "at least one counter has to be in the set");
 
@@ -67,7 +70,7 @@ struct counter_set
             throw std::runtime_error(std::string("PAPI_stop_counters failed with error: ") + PAPI_strerror(ret));
     }
 
-    const auto& get_counters() const
+    const auto& counters() const
     {
         return _counters;
     }
@@ -75,7 +78,7 @@ struct counter_set
     static constexpr const std::array<papi_event, events_count> s_events = {{_Events...}};
 
 private:
-    std::array<long long, events_count> _counters;
+    std::array<papi_counter, events_count> _counters;
 };
 
 template <papi_event... _Events>
