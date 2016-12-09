@@ -23,6 +23,28 @@ inline std::string get_papi_event_name(int event_code)
     return event_name.data();
 }
 
+using papi_counter_type = int;
+
+template <papi_counter_type _CounterTypeT>
+struct counter
+{
+    using value_type = long long;
+
+    value_type value() const { return value; }
+
+    static constexpr papi_counter_type type() { return _CounterTypeT; }
+    static const std::string& name() { return s_name; }
+
+private:
+    value_type _value;
+
+    static const std::string s_name;
+};
+
+template <papi_counter_type _CounterTypeT>
+const std::string counter<_CounterTypeT>::s_name = get_papi_event_name(_CounterTypeT);
+
+
 using event = int;
 
 template <event... _EventsT>
@@ -74,6 +96,7 @@ struct event_set
     template <event _EventIndexT>
     static const std::string& get_event_name()
     {
+        static_assert(_EventIndexT < events_count, "event index greater than number of events in the set");
         return s_event_names[_EventIndexT];
     }
 
