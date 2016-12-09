@@ -32,6 +32,8 @@ template <event... _EventsT>
 struct event_set : public event_set_base
 {
     static constexpr std::size_t events_count = sizeof...(_EventsT);
+    static_assert(events_count > 0, "at least one event has to be in the set");
+
     using counters_type = std::array<long long, events_count>;
 
     static const std::array<event, events_count>& get_event_types()
