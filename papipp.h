@@ -62,11 +62,6 @@ struct counter_set
             throw std::runtime_error(std::string("PAPI_stop_counters failed with error: ") + PAPI_strerror(ret));
     }
 
-    const auto& counters() const
-    {
-        return _counters;
-    }
-
     template <std::size_t EventIndex>
     papi_counter counter() const
     {
