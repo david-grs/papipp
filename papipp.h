@@ -25,14 +25,14 @@ inline std::string get_papi_event_name(int event_code)
 
 using papi_counter_type = int;
 
-template <papi_counter_type _CounterTypeT>
+template <papi_counter_type _CounterType>
 struct counter
 {
     using value_type = long long;
 
     value_type value() const { return value; }
 
-    static constexpr papi_counter_type type() { return _CounterTypeT; }
+    static constexpr papi_counter_type type() { return _CounterType; }
     static const std::string& name() { return s_name; }
 
 private:
@@ -41,8 +41,15 @@ private:
     static const std::string s_name;
 };
 
-template <papi_counter_type _CounterTypeT>
-const std::string counter<_CounterTypeT>::s_name = get_papi_event_name(_CounterTypeT);
+template <papi_counter_type _CounterType>
+const std::string counter<_CounterType>::s_name = get_papi_event_name(_CounterType);
+
+
+template <typename... _Counters>
+struct counter_set
+{
+};
+
 
 
 using event = int;
