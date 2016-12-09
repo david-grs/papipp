@@ -29,16 +29,10 @@ using papi_counter = long long;
 template <papi_event _Event>
 struct counter
 {
-    using value_type = papi_counter;
-
-    value_type value() const { return value; }
-
     static constexpr papi_event event() { return _Event; }
     static const std::string& name() { return s_name; }
 
 private:
-    value_type _value;
-
     static const std::string s_name;
 };
 
