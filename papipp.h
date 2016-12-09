@@ -49,8 +49,6 @@ const std::string counter<_Event>::s_name = get_papi_event_name(_Event);
 template <papi_event... _Events>
 struct counter_set
 {
-    using value_type = papi_counter;
-
     static constexpr const std::size_t events_count = sizeof...(_Events);
     static_assert(events_count > 0, "at least one counter has to be in the set");
 
@@ -75,9 +73,9 @@ struct counter_set
         return _counters;
     }
 
+private:
     static constexpr const std::array<papi_event, events_count> s_events = {{_Events...}};
 
-private:
     std::array<papi_counter, events_count> _counters;
 };
 
