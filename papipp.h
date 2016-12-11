@@ -61,11 +61,11 @@ struct event_set
             throw std::runtime_error(std::string("PAPI_stop_counters failed with error: ") + PAPI_strerror(ret));
     }
 
-    template <std::size_t EventIndex>
+    template <std::size_t _EventIndex>
     papi_counter counter() const
     {
-        static_assert(EventIndex < events_count, "event index greater than number of events in the set");
-        return _counters;
+        static_assert(_EventIndex < events_count, "event index greater than number of events in the set");
+        return _counters[_EventIndex];
     }
 
 private:
