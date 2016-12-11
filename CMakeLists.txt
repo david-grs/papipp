@@ -8,3 +8,6 @@ add_subdirectory(tests)
 install(DIRECTORY DESTINATION include)
 install(FILES "papipp.h" DESTINATION include)
 
+add_executable(example example.cc)
+target_link_libraries(example papi)
+
