@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-using namespace papi;
+using namespace papipp;
 
 TEST(papipp, Basic)
 {
