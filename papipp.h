@@ -49,7 +49,7 @@ struct event_set
     {
         int ret;
 
-        if (likely_false((ret = ::PAPI_start_counters(const_cast<int*>(s_events.data()), size())) != PAPI_OK))
+        if (likely_false((ret = ::PAPI_start_counters(s_events.data(), size())) != PAPI_OK))
             throw std::runtime_error(std::string("PAPI_start_counters failed with error: ") + PAPI_strerror(ret));
     }
 
@@ -57,7 +57,7 @@ struct event_set
     {
         int ret;
 
-        if (likely_false((ret = PAPI_stop_counters(&_counters[0], size())) != PAPI_OK))
+        if (likely_false((ret = PAPI_stop_counters(_counters.data(), size())) != PAPI_OK))
             throw std::runtime_error(std::string("PAPI_stop_counters failed with error: ") + PAPI_strerror(ret));
     }
 
@@ -69,13 +69,13 @@ struct event_set
     }
 
 private:
-    static constexpr const std::array<event_code, sizeof...(_Events)> s_events = {{_Events...}};
+    static std::array<event_code, sizeof...(_Events)> s_events;
 
     std::array<papi_counter, sizeof...(_Events)> _counters;
 };
 
 template <event_code... _Events>
-constexpr const std::array<event_code, sizeof...(_Events)> event_set<_Events...>::s_events;
+std::array<event_code, sizeof...(_Events)> event_set<_Events...>::s_events = {{_Events...}};
 
 
 using cache_events = event_set<PAPI_L1_DCM, PAPI_L2_DCM, PAPI_L3_TCM>;
