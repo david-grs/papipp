@@ -26,7 +26,6 @@ inline std::string get_event_code_name(event_code code)
     return event_name.data();
 }
 
-
 template <event_code _Event>
 struct event
 {
@@ -40,9 +39,8 @@ private:
 template <event_code _Event>
 const std::string event<_Event>::s_name = get_event_code_name(_Event);
 
-
 template <event_code... _Events>
-struct counter_set
+struct event_set
 {
     static constexpr const std::size_t events_count = sizeof...(_Events);
     static_assert(events_count > 0, "at least one counter has to be in the set");
@@ -77,10 +75,10 @@ private:
 };
 
 template <event_code... _Events>
-constexpr const std::array<event_code, counter_set<_Events...>::events_count> counter_set<_Events...>::s_events;
+constexpr const std::array<event_code, event_set<_Events...>::events_count> event_set<_Events...>::s_events;
 
 
-using cache_events = counter_set<PAPI_L1_DCM, PAPI_L2_DCM, PAPI_L3_TCM>;
-//using instr_events = event_set<PAPI_TOT_INS, PAPI_TOT_CYC, PAPI_BR_MSP>;
+using cache_events = event_set<PAPI_L1_DCM, PAPI_L2_DCM, PAPI_L3_TCM>;
+using instr_events = event_set<PAPI_TOT_INS, PAPI_TOT_CYC, PAPI_BR_MSP>;
 
 }
