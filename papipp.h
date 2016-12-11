@@ -12,7 +12,7 @@ extern "C"
 #define likely_true(x)   __builtin_expect(!!(x), 1)
 #define likely_false(x)  __builtin_expect(!!(x), 0)
 
-namespace papipp
+namespace papi
 {
 
 using event_code = int;

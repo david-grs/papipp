@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-using namespace papipp;
+using namespace papi;
 
 TEST(event, basic)
 {
