@@ -12,12 +12,12 @@ TEST(papipp, Basic)
     //std::cout << l.get_event_name<0>() << std::endl;
 }
 
-TEST(counter, basic)
+TEST(event, basic)
 {
-    counter<PAPI_L1_DCM> c;
+    event<PAPI_L1_DCM> c;
     std::cout << c.name() << std::endl;
 
     EXPECT_EQ(sizeof(long long), sizeof(c));
     EXPECT_GE(c.name().size(), 1);
-    EXPECT_EQ(PAPI_L1_DCM, c.event());
+    EXPECT_EQ(PAPI_L1_DCM, c.code());
 }

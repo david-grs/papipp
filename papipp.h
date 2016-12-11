@@ -15,32 +15,33 @@ extern "C"
 namespace papi
 {
 
-inline std::string get_papi_event_name(int event_code)
+using event_code = int;
+using papi_counter = long long;
+
+inline std::string get_event_code_name(event_code code)
 {
     std::array<char, PAPI_MAX_STR_LEN> event_name;
-    PAPI_event_code_to_name(event_code, event_name.data());
+    ::PAPI_event_code_to_name(code, event_name.data());
 
     return event_name.data();
 }
 
-using papi_event = int;
-using papi_counter = long long;
 
-template <papi_event _Event>
-struct counter
+template <event_code _PAPIEvent>
+struct event
 {
-    static constexpr papi_event event() { return _Event; }
+    static constexpr event_code code() { return _PAPIEvent; }
     static const std::string& name() { return s_name; }
 
 private:
     static const std::string s_name;
 };
 
-template <papi_event _Event>
-const std::string counter<_Event>::s_name = get_papi_event_name(_Event);
+template <event_code _PAPIEvent>
+const std::string event<_PAPIEvent>::s_name = get_event_code_name(_PAPIEvent);
 
 
-template <papi_event... _Events>
+template <event_code... _Events>
 struct counter_set
 {
     static constexpr const std::size_t events_count = sizeof...(_Events);
@@ -70,16 +71,16 @@ struct counter_set
     }
 
 private:
-    static constexpr const std::array<papi_event, events_count> s_events = {{_Events...}};
+    static constexpr const std::array<event_code, events_count> s_events = {{_Events...}};
 
     std::array<papi_counter, events_count> _counters;
 };
 
-template <papi_event... _Events>
-constexpr const std::array<papi_event, counter_set<_Events...>::events_count> counter_set<_Events...>::s_events;
+template <event_code... _Events>
+constexpr const std::array<event_code, counter_set<_Events...>::events_count> counter_set<_Events...>::s_events;
 
 
-//using cache_events = event_set<PAPI_L1_DCM, PAPI_L2_DCM, PAPI_L3_TCM>;
+using cache_events = counter_set<PAPI_L1_DCM, PAPI_L2_DCM, PAPI_L3_TCM>;
 //using instr_events = event_set<PAPI_TOT_INS, PAPI_TOT_CYC, PAPI_BR_MSP>;
 
 }
