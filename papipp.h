@@ -27,18 +27,18 @@ inline std::string get_event_code_name(event_code code)
 }
 
 
-template <event_code _PAPIEvent>
+template <event_code _Event>
 struct event
 {
-    static constexpr event_code code() { return _PAPIEvent; }
+    static constexpr event_code code() { return _Event; }
     static const std::string& name() { return s_name; }
 
 private:
     static const std::string s_name;
 };
 
-template <event_code _PAPIEvent>
-const std::string event<_PAPIEvent>::s_name = get_event_code_name(_PAPIEvent);
+template <event_code _Event>
+const std::string event<_Event>::s_name = get_event_code_name(_Event);
 
 
 template <event_code... _Events>
