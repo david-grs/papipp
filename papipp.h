@@ -42,14 +42,14 @@ const std::string event<_Event>::s_name = get_event_code_name(_Event);
 template <event_code... _Events>
 struct event_set
 {
-    static constexpr const std::size_t events_count = sizeof...(_Events);
-    static_assert(events_count > 0, "at least one counter has to be in the set");
+    static constexpr std::size_t size() { return sizeof...(_Events); }
+    static_assert(size() > 0, "at least one hardware event has to be in the set");
 
     void start()
     {
         int ret;
 
-        if (likely_false((ret = ::PAPI_start_counters(const_cast<int*>(s_events.data()), events_count)) != PAPI_OK))
+        if (likely_false((ret = ::PAPI_start_counters(const_cast<int*>(s_events.data()), size())) != PAPI_OK))
             throw std::runtime_error(std::string("PAPI_start_counters failed with error: ") + PAPI_strerror(ret));
     }
 
@@ -57,25 +57,25 @@ struct event_set
     {
         int ret;
 
-        if (likely_false((ret = PAPI_stop_counters(&_counters[0], events_count)) != PAPI_OK))
+        if (likely_false((ret = PAPI_stop_counters(&_counters[0], size())) != PAPI_OK))
             throw std::runtime_error(std::string("PAPI_stop_counters failed with error: ") + PAPI_strerror(ret));
     }
 
     template <std::size_t _EventIndex>
     papi_counter counter() const
     {
-        static_assert(_EventIndex < events_count, "event index greater than number of events in the set");
+        static_assert(_EventIndex < size(), "event index greater than number of events in the set");
         return _counters[_EventIndex];
     }
 
 private:
-    static constexpr const std::array<event_code, events_count> s_events = {{_Events...}};
+    static constexpr const std::array<event_code, sizeof...(_Events)> s_events = {{_Events...}};
 
-    std::array<papi_counter, events_count> _counters;
+    std::array<papi_counter, sizeof...(_Events)> _counters;
 };
 
 template <event_code... _Events>
-constexpr const std::array<event_code, event_set<_Events...>::events_count> event_set<_Events...>::s_events;
+constexpr const std::array<event_code, sizeof...(_Events)> event_set<_Events...>::s_events;
 
 
 using cache_events = event_set<PAPI_L1_DCM, PAPI_L2_DCM, PAPI_L3_TCM>;
