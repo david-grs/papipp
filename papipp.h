@@ -77,8 +77,4 @@ private:
 template <event_code... _Events>
 std::array<event_code, sizeof...(_Events)> event_set<_Events...>::s_events = {{_Events...}};
 
-
-using cache_events = event_set<PAPI_L1_DCM, PAPI_L2_DCM, PAPI_L3_TCM>;
-using instr_events = event_set<PAPI_TOT_INS, PAPI_TOT_CYC, PAPI_BR_MSP>;
-
 }
