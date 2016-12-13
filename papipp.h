@@ -29,11 +29,19 @@ inline std::string get_event_code_name(event_code code)
 template <event_code _Event>
 struct event
 {
+    explicit event(papi_counter counter = {})
+     : _counter(counter)
+    {}
+
+    papi_counter counter() const { return _counter; }
+
     static constexpr event_code code() { return _Event; }
     static const std::string& name() { return s_name; }
 
 private:
     static const std::string s_name;
+
+    papi_counter _counter;
 };
 
 template <event_code _Event>
