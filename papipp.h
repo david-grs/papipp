@@ -45,7 +45,7 @@ struct event_set
     static constexpr std::size_t size() { return sizeof...(_Events); }
     static_assert(size() > 0, "at least one hardware event has to be in the set");
 
-    void start()
+    void start_counters()
     {
         int ret;
 
@@ -53,11 +53,11 @@ struct event_set
             throw std::runtime_error(std::string("PAPI_start_counters failed with error: ") + PAPI_strerror(ret));
     }
 
-    void stop()
+    void stop_counters()
     {
         int ret;
 
-        if (likely_false((ret = PAPI_stop_counters(_counters.data(), size())) != PAPI_OK))
+        if (likely_false((ret = ::PAPI_stop_counters(_counters.data(), size())) != PAPI_OK))
             throw std::runtime_error(std::string("PAPI_stop_counters failed with error: ") + PAPI_strerror(ret));
     }
 
