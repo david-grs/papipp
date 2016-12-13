@@ -70,10 +70,13 @@ struct event_set
     }
 
     template <std::size_t _EventIndex>
-    papi_counter counter() const
+    auto at() const
     {
         static_assert(_EventIndex < size(), "event index greater than number of events in the set");
-        return _counters[_EventIndex];
+
+        static constexpr const std::array<event_code, sizeof...(_Events)> events = {{_Events...}};
+        constexpr event_code code = events[_EventIndex];
+        return event<code>(_counters[_EventIndex]);
     }
 
 private:

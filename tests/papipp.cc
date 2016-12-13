@@ -22,6 +22,6 @@ TEST(event_set, basic)
     std::cout << "test" << std::endl;
     c.stop_counters();
 
-    EXPECT_GE(c.counter<0>(), 1);
-    EXPECT_GE(c.counter<1>(), 1);
+    EXPECT_GE(c.at<0>().counter(), 1);
+    EXPECT_GE(c.at<1>().counter(), 1);
 }

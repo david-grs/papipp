@@ -13,6 +13,7 @@ int main()
         std::sort(std::begin(v), std::end(v));
 
         instr_events.stop_counters();
+        //std::cout << instr_events.get_counter<0>() << std::endl;
     }
 
 #if 0
