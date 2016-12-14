@@ -22,7 +22,7 @@ namespace detail
 {
 
 template <typename ArrayT>
-static constexpr int find_(event_code x, ArrayT& ar, int size, int i)
+static constexpr int find_(event_code x, ArrayT& ar, std::size_t size, std::size_t i)
 {
     return size == i ? -1 : (ar[i] == x ? i : find_(x, ar, size, i + 1));
 }
