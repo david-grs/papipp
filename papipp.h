@@ -97,6 +97,13 @@ struct event_set
         return event<code>(_counters[_EventIndex]);
     }
 
+    template <event_code _EventCode>
+    auto get() const
+    {
+        constexpr int EventIndex = detail::find<_Events...>(_EventCode);
+        return at<EventIndex>();
+    }
+
 private:
     static std::array<event_code, sizeof...(_Events)> s_events;
 

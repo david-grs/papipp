@@ -24,4 +24,5 @@ TEST(event_set, basic)
 
     EXPECT_GE(c.at<0>().counter(), 1);
     EXPECT_GE(c.at<1>().counter(), 1);
+    EXPECT_GE(c.get<PAPI_L1_DCM>().counter(), 1);
 }
