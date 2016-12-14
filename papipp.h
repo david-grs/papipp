@@ -15,6 +15,24 @@ extern "C"
 namespace papi
 {
 
+namespace detail
+{
+
+template <typename ArrayT>
+static constexpr int find_(int x, ArrayT& ar, int size, int i)
+{
+    return size == i ? -1 : (ar[i] == x ? i : find_(x, ar, size, i + 1));
+}
+
+template <int... is>
+static constexpr int find(int x)
+{
+    constexpr const std::array<int, sizeof...(is)> ar = {{is...}};
+    return find_(x, ar, sizeof...(is), 0);
+}
+
+}
+
 using event_code = int;
 using papi_counter = long long;
 
