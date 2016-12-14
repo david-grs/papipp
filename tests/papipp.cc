@@ -9,7 +9,7 @@ TEST(event, basic)
     event<PAPI_L1_DCM> c;
     std::cout << c.name() << std::endl;
 
-    EXPECT_EQ(1, sizeof(c));
+    EXPECT_EQ(sizeof(papi_counter), sizeof(c));
     EXPECT_GE(c.name().size(), 1);
     EXPECT_EQ(PAPI_L1_DCM, c.code());
 }
