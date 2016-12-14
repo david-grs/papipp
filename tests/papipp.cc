@@ -35,3 +35,12 @@ TEST(event_set, at)
     EXPECT_EQ(PAPI_L1_DCM, c.at<0>().code());
     EXPECT_EQ(PAPI_L2_DCM, c.at<1>().code());
 }
+
+
+TEST(event_set, get)
+{
+    event_set<PAPI_L1_DCM, PAPI_L2_DCM> c;
+
+    EXPECT_EQ(PAPI_L1_DCM, c.get<PAPI_L1_DCM>().code());
+    EXPECT_EQ(PAPI_L2_DCM, c.get<PAPI_L2_DCM>().code());
+}

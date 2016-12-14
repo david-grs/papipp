@@ -99,6 +99,7 @@ struct event_set
     auto get() const
     {
         constexpr int EventIndex = detail::find<_Events...>(_EventCode);
+        static_assert(EventIndex != -1, "EventCode not present in this event_set");
         return at<EventIndex>();
     }
 
