@@ -9,8 +9,10 @@ int main()
     papi::event_set<PAPI_TOT_INS, PAPI_TOT_CYC, PAPI_BR_MSP, PAPI_L1_DCM> events;
     events.start_counters();
 
-    std::vector<int> v = {{11, 7, 5, 3, 1}};
-    std::sort(std::begin(v), std::end(v));
+    {
+        std::vector<int> v = {{11, 7, 5, 3, 1}};
+        std::sort(std::begin(v), std::end(v));
+    }
 
     events.stop_counters();
 
