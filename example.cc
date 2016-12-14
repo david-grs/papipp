@@ -4,12 +4,6 @@
 #include <algorithm>
 #include <iostream>
 
-template <papi::event_code Event>
-std::ostream& operator<<(std::ostream& os, papi::event<Event> event)
-{
-    return os << event.name() << ": " << event.counter();
-}
-
 int main()
 {
     papi::event_set<PAPI_TOT_INS, PAPI_TOT_CYC, PAPI_BR_MSP, PAPI_L1_DCM> events;
@@ -20,10 +14,12 @@ int main()
 
     events.stop_counters();
 
-    std::cout << events.at<0>() << "\n"
-              << events.at<1>() << "\n"
-              << events.at<2>() << "\n"
-              << events.at<3>() << std::endl;
+    // accessing counters via at<EventIndex>()
+    std::cout << events.at<0>().counter() / static_cast<double>(events.at<1>().counter()) << " insns per cycle\n";
+
+    // or via .get<EventCode>()
+    std::cout << events.get<PAPI_L1_DCM>().counter() << " l1 dcache misses\n"
+              << events.get<PAPI_BR_MSP>().counter() << " branch misses" << std::endl;
 
     return 0;
 }
