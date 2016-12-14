@@ -2,23 +2,28 @@
 
 #include <vector>
 #include <algorithm>
+#include <iostream>
+
+template <papi::event_code Event>
+std::ostream& operator<<(std::ostream& os, papi::event<Event> event)
+{
+    return os << event.name() << ": " << event.counter();
+}
 
 int main()
 {
-    {
-        papi::event_set<PAPI_TOT_INS, PAPI_TOT_CYC, PAPI_BR_MSP> instr_events;
-        instr_events.start_counters();
+    papi::event_set<PAPI_TOT_INS, PAPI_TOT_CYC, PAPI_BR_MSP, PAPI_L1_DCM> events;
+    events.start_counters();
 
-        std::vector<int> v = {{11, 7, 5, 3, 1}};
-        std::sort(std::begin(v), std::end(v));
+    std::vector<int> v = {{11, 7, 5, 3, 1}};
+    std::sort(std::begin(v), std::end(v));
 
-        instr_events.stop_counters();
-        //std::cout << instr_events.get_counter<0>() << std::endl;
-    }
+    events.stop_counters();
 
-#if 0
-    {
-        using cache_events = event_set<PAPI_L1_DCM, PAPI_L2_DCM, PAPI_L3_TCM>;
-    }
-#endif
+    std::cout << events.at<0>() << "\n"
+              << events.at<1>() << "\n"
+              << events.at<2>() << "\n"
+              << events.at<3>() << std::endl;
+
+    return 0;
 }
