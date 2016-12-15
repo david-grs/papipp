@@ -82,16 +82,16 @@ struct event_set
     {
         static constexpr const std::array<event_code, sizeof...(_Events)> events = {{_Events...}};
 
-        constexpr int eventIndex = find_code(_EventCode, events, sizeof...(_Events), 0);
+        constexpr int eventIndex = find(_EventCode, events, sizeof...(_Events), 0);
         static_assert(eventIndex != -1, "EventCode not present in this event_set");
         return at<eventIndex>();
     }
 
 private:
     template <typename ArrayT>
-    static constexpr int find_code(event_code x, ArrayT& ar, std::size_t size, std::size_t i)
+    static constexpr int find(event_code x, ArrayT& ar, std::size_t size, std::size_t i)
     {
-        return size == i ? -1 : (ar[i] == x ? i : find_code(x, ar, size, i + 1));
+        return size == i ? -1 : (ar[i] == x ? i : find(x, ar, size, i + 1));
     }
 
     static std::array<event_code, sizeof...(_Events)> s_events;
