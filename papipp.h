@@ -18,24 +18,6 @@ namespace papi
 using event_code = int;
 using papi_counter = long long;
 
-namespace detail
-{
-
-template <typename ArrayT>
-static constexpr int find_(event_code x, ArrayT& ar, std::size_t size, std::size_t i)
-{
-    return size == i ? -1 : (ar[i] == x ? i : find_(x, ar, size, i + 1));
-}
-
-template <event_code... is>
-static constexpr int find(event_code x)
-{
-    constexpr const std::array<event_code, sizeof...(is)> ar = {{is...}};
-    return find_(x, ar, sizeof...(is), 0);
-}
-
-}
-
 inline std::string get_event_code_name(event_code code)
 {
     std::array<char, PAPI_MAX_STR_LEN> event_name;
@@ -98,12 +80,20 @@ struct event_set
     template <event_code _EventCode>
     auto get() const
     {
-        constexpr int EventIndex = detail::find<_Events...>(_EventCode);
-        static_assert(EventIndex != -1, "EventCode not present in this event_set");
-        return at<EventIndex>();
+        static constexpr const std::array<event_code, sizeof...(_Events)> events = {{_Events...}};
+
+        constexpr int eventIndex = find_code(_EventCode, events, sizeof...(_Events), 0);
+        static_assert(eventIndex != -1, "EventCode not present in this event_set");
+        return at<eventIndex>();
     }
 
 private:
+    template <typename ArrayT>
+    static constexpr int find_code(event_code x, ArrayT& ar, std::size_t size, std::size_t i)
+    {
+        return size == i ? -1 : (ar[i] == x ? i : find_code(x, ar, size, i + 1));
+    }
+
     static std::array<event_code, sizeof...(_Events)> s_events;
 
     std::array<papi_counter, sizeof...(_Events)> _counters;
