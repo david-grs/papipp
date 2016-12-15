@@ -58,6 +58,14 @@ struct event_set
             throw std::runtime_error(std::string("PAPI_start_counters failed with error: ") + PAPI_strerror(ret));
     }
 
+    void reset_counters()
+    {
+        int ret;
+
+        if (likely_false((ret = ::PAPI_read_counters(_counters.data(), size())) != PAPI_OK))
+            throw std::runtime_error(std::string("PAPI_read_counters failed with error: ") + PAPI_strerror(ret));
+    }
+
     void stop_counters()
     {
         int ret;
