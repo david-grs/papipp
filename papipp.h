@@ -117,4 +117,28 @@ private:
 template <event_code... _Events>
 std::array<event_code, sizeof...(_Events)> event_set<_Events...>::s_events = {{_Events...}};
 
+namespace detail
+{
+
+template <std::size_t N, typename _Stream, event_code... _Events>
+inline std::enable_if_t<N == event_set<_Events...>::size()>
+to_stream(_Stream&, const event_set<_Events...>&) { }
+
+template <std::size_t N, typename _Stream, event_code... _Events>
+inline std::enable_if_t<N < event_set<_Events...>::size()>
+to_stream(_Stream& strm, const event_set<_Events...>& set)
+{
+    strm << set.template at<N>() << " ";
+    detail::to_stream<N + 1>(strm, set);
+}
+
+}
+
+template <typename _Stream, event_code... _Events>
+inline _Stream& operator<<(_Stream& strm, const event_set<_Events...>& set)
+{
+    detail::to_stream<0>(strm, set);
+    return strm;
+}
+
 }
