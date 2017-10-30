@@ -47,6 +47,13 @@ private:
 template <event_code _Event>
 const std::string event<_Event>::s_name = get_event_code_name(_Event);
 
+template <typename _Stream, event_code _Event>
+inline _Stream& operator<<(_Stream& strm, const event<_Event>& evt)
+{
+    strm << evt.name() << "=" << evt.counter();
+    return strm;
+}
+
 template <event_code... _Events>
 struct event_set
 {
