@@ -57,6 +57,9 @@ inline _Stream& operator<<(_Stream& strm, const event<_Event>& evt)
 template <event_code... _Events>
 struct event_set
 {
+    explicit event_set()
+    {}
+
     void start_counters()
     {
         int ret;
@@ -82,7 +85,7 @@ struct event_set
     }
 
     static constexpr std::size_t size() { return sizeof...(_Events); }
-    static_assert(size() > 0, "at least one hardware event has to be in the set");
+    //static_assert(size() > 0, "at least one hardware event has to be in the set");
 
     template <std::size_t _EventIndex>
     auto at() const
