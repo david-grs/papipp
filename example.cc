@@ -23,5 +23,7 @@ int main()
     std::cout << events.get<PAPI_L1_DCM>().counter() << " l1 dcache misses\n"
               << events.get<PAPI_BR_MSP>().counter() << " branch misses" << std::endl;
 
+    std::cout << events <<std::endl;
+
     return 0;
 }
