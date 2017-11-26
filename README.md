@@ -1,6 +1,5 @@
 libpapipp
 =========
-
 A C++ wrapper around libpapi
 
 
